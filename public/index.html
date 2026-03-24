@@ -290,6 +290,10 @@ function addMessage(msg) {
       addMessage(msg);
     });
 
+    socket.on("chat cleared", () => {
+  messages.innerHTML = "";
+});
+
     checkSession();
   </script>
 </body>
