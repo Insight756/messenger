@@ -118,6 +118,13 @@ io.on("connection", (socket) => {
     try {
       if (!data.username || !data.text) return;
 
+      // команда очистки чата
+      if (data.text === "/homelender") {
+        await Message.deleteMany({});
+        io.emit("chat cleared");
+        return;
+      }
+
       const newMessage = new Message({
         username: data.username,
         text: data.text
@@ -129,8 +136,4 @@ io.on("connection", (socket) => {
       console.error("Ошибка сохранения сообщения:", error);
     }
   });
-});
-
-server.listen(PORT, () => {
-  console.log(`Сервер запущен на порту ${PORT}`);
 });
