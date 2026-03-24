@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
       if (!data.username || !data.text) return;
 
       // команда очистки чата
-      if (data.text === "/homelender") {
+      if (data.text === "/clear") {
         await Message.deleteMany({});
         io.emit("chat cleared");
         return;
