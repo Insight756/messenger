@@ -179,12 +179,28 @@
       chatBox.classList.add("hidden");
     }
 
-    function addMessage(msg) {
-      const li = document.createElement("li");
-      li.innerHTML = `<span class="username">${msg.username}</span>${msg.text}`;
-      messages.appendChild(li);
-      messages.scrollTop = messages.scrollHeight;
-    }
+    function formatTime(dateString) {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function addMessage(msg) {
+  const li = document.createElement("li");
+
+  const time = msg.createdAt ? formatTime(msg.createdAt) : "";
+
+  li.innerHTML = `
+    <span class="username">${msg.username}</span>
+    ${msg.text}
+    <div style="font-size: 12px; color: gray; margin-top: 4px;">
+      ${time}
+    </div>
+  `;
+
+  messages.appendChild(li);
+  messages.scrollTop = messages.scrollHeight;
+}
+    
 
     async function loadMessages() {
       messages.innerHTML = "";
