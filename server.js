@@ -1,7 +1,6 @@
 const express = require("express");
 const http = require("http");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { Server } = require("socket.io");
@@ -12,7 +11,6 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
-// ВСТАВЬ СВОЮ СТРОКУ MONGODB СЮДА:
 const MONGO_URI =
   "mongodb+srv://winwan2006wanwin_db_user:iyUrcloBOVwWBQXF@cluster0.njgkkv5.mongodb.net/messenger?retryWrites=true&w=majority";
 
@@ -27,9 +25,6 @@ app.use(
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: MONGO_URI
-    }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24
     }
