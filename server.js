@@ -58,6 +58,11 @@ app.post("/register", async (req, res) => {
       return res.status(400).json({ error: "Введите логин и пароль" });
     }
 
+    //  лимит 25 символов
+    if (username.length > 25) {
+      return res.status(400).json({ error: "Логин максимум 25 символов" });
+    }
+
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: "Пользователь уже существует" });
@@ -87,6 +92,10 @@ app.post("/login", async (req, res) => {
     if (!ok) {
       return res.status(400).json({ error: "Неверный пароль" });
     }
+
+    if (username.length > 25) {
+  return res.status(400).json({ error: "Слишком длинный логин" });
+}
 
     req.session.user = { username };
     res.json({ message: "Вход выполнен", username });
@@ -118,12 +127,24 @@ io.on("connection", (socket) => {
     try {
       if (!data.username || !data.text) return;
 
-      // команда очистки чата
-      if (data.text === "/clear") {
+      if (data.text.trim() === "/clear") {
         await Message.deleteMany({});
         io.emit("chat cleared");
         return;
       }
+
+      // 🎲 команда броска кубика
+if (data.text.trim() === "/roll") {
+  const roll = Math.floor(Math.random() * 20) + 1;
+
+  const rollMessage = {
+    username: data.username,
+    text: `🎲 бросил кубик: ${roll}`
+  };
+
+  io.emit("chat message", rollMessage);
+  return;
+}
 
       const newMessage = new Message({
         username: data.username,
@@ -136,4 +157,8 @@ io.on("connection", (socket) => {
       console.error("Ошибка сохранения сообщения:", error);
     }
   });
+});
+
+server.listen(PORT, () => {
+  console.log(`Сервер запущен на порту ${PORT}`);
 });
