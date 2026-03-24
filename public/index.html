@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Мессенджер</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #2d3e50);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 750px;
+      height: 85vh;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .chat-header {
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .messages {
+      flex: 1;
+      list-style: none;
+      margin: 0;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .messages li {
+      max-width: 80%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: white;
+      color: #222;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+
+    .messages li .username {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      color: #4a67ff;
+      margin-bottom: 4px;
+    }
+
+    .form-area {
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .top-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .bottom-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.95);
+      width: 100%;
+    }
+
+    #name {
+      max-width: 220px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      padding: 14px 22px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg, #4a67ff, #6f86ff);
+      color: white;
+      transition: 0.2s ease;
+      min-width: 140px;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(74, 103, 255, 0.35);
+    }
+
+    .empty-text {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 30px;
+      font-size: 16px;
+    }
+
+    @media (max-width: 700px) {
+      .chat-container {
+        height: 92vh;
+      }
+
+      .top-row,
+      .bottom-row {
+        flex-direction: column;
+      }
+
+      #name {
+        max-width: 100%;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .messages li {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Общий чат</div>
+
+    <ul id="messages" class="messages">
+      <div id="emptyText" class="empty-text">Пока нет сообщений</div>
+    </ul>
+
+    <div class="form-area">
+      <div class="top-row">
+        <input id="name" type="text" placeholder="Введите имя" />
+      </div>
+
+      <div class="bottom-row">
+        <input id="message" type="text" placeholder="Введите сообщение" />
+        <button id="sendBtn">Отправить</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const messages = document.getElementById("messages");
+    const nameInput = document.getElementById("name");
+    const messageInput = document.getElementById("message");
+    const sendBtn = document.getElementById("sendBtn");
+    const emptyText = document.getElementById("emptyText");
+
+    function sendMessage() {
+      const name = nameInput.value.trim();
+      const message = messageInput.value.trim();
+
+      if (!name || !message) {
+        alert("Заполни имя и сообщение");
+        return;
+      }
+
+      socket.emit("chat message", { name, message });
+      messageInput.value = "";
+      messageInput.focus();
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        messageInput.focus();
+      }
+    });
+
+    socket.on("chat message", (data) => {
+      if (emptyText) {
+        emptyText.remove();
+      }
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span class="username">${data.name}</span>
+        <span>${data.message}</span>
+      `;
+
+      messages.appendChild(li);
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
