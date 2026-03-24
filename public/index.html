@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Мессенджер</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -18,160 +16,132 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-    }
-
-    .chat-container {
-      width: 100%;
-      max-width: 750px;
-      height: 85vh;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .chat-header {
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.2);
       color: white;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .header {
+      padding: 18px;
       text-align: center;
       font-size: 28px;
       font-weight: bold;
-      letter-spacing: 1px;
+      background: rgba(0,0,0,0.2);
     }
 
-    .messages {
-      flex: 1;
-      list-style: none;
-      margin: 0;
+    .auth, .chat {
       padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.04);
     }
 
-    .messages li {
-      max-width: 80%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: white;
-      color: #222;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-      word-wrap: break-word;
-      line-height: 1.4;
-    }
-
-    .messages li .username {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      color: #4a67ff;
-      margin-bottom: 4px;
-    }
-
-    .form-area {
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.18);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .top-row {
+    .row {
       display: flex;
       gap: 10px;
+      margin-bottom: 12px;
     }
 
-    .bottom-row {
-      display: flex;
-      gap: 10px;
+    input, button {
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
     }
 
     input {
-      border: none;
-      outline: none;
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-size: 15px;
-      background: rgba(255, 255, 255, 0.95);
-      width: 100%;
-    }
-
-    #name {
-      max-width: 220px;
+      flex: 1;
     }
 
     button {
-      border: none;
-      outline: none;
-      border-radius: 12px;
-      padding: 14px 22px;
-      font-size: 15px;
-      font-weight: bold;
       cursor: pointer;
-      background: linear-gradient(135deg, #4a67ff, #6f86ff);
+      background: #4a67ff;
       color: white;
-      transition: 0.2s ease;
-      min-width: 140px;
+      font-weight: bold;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(74, 103, 255, 0.35);
+    #messages {
+      list-style: none;
+      margin: 0;
+      padding: 15px;
+      height: 400px;
+      overflow-y: auto;
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
     }
 
-    .empty-text {
-      text-align: center;
-      color: rgba(255, 255, 255, 0.7);
-      margin-top: 30px;
-      font-size: 16px;
+    #messages li {
+      background: white;
+      color: #222;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+
+    .username {
+      font-weight: bold;
+      color: #4a67ff;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .error {
+      color: #ffb3b3;
+      margin-top: 8px;
     }
 
     @media (max-width: 700px) {
-      .chat-container {
-        height: 92vh;
-      }
-
-      .top-row,
-      .bottom-row {
+      .row, .topbar {
         flex-direction: column;
-      }
-
-      #name {
-        max-width: 100%;
-      }
-
-      button {
-        width: 100%;
-      }
-
-      .messages li {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-header">Общий чат</div>
+  <div class="container">
+    <div class="header">Мессенджер</div>
 
-    <ul id="messages" class="messages">
-      <div id="emptyText" class="empty-text">Пока нет сообщений</div>
-    </ul>
+    <div id="authBox" class="auth">
+      <div class="row">
+        <input id="authUsername" type="text" placeholder="Логин">
+      </div>
+      <div class="row">
+        <input id="authPassword" type="password" placeholder="Пароль">
+      </div>
+      <div class="row">
+        <button id="registerBtn">Регистрация</button>
+        <button id="loginBtn">Вход</button>
+      </div>
+      <div id="authError" class="error"></div>
+    </div>
 
-    <div class="form-area">
-      <div class="top-row">
-        <input id="name" type="text" placeholder="Введите имя" />
+    <div id="chatBox" class="chat hidden">
+      <div class="topbar">
+        <div>Вы вошли как: <span id="currentUser"></span></div>
+        <button id="logoutBtn">Выйти</button>
       </div>
 
-      <div class="bottom-row">
-        <input id="message" type="text" placeholder="Введите сообщение" />
+      <ul id="messages"></ul>
+
+      <div class="row" style="margin-top:12px;">
+        <input id="messageInput" type="text" placeholder="Введите сообщение">
         <button id="sendBtn">Отправить</button>
       </div>
     </div>
@@ -181,54 +151,130 @@
   <script>
     const socket = io();
 
+    const authBox = document.getElementById("authBox");
+    const chatBox = document.getElementById("chatBox");
+    const authUsername = document.getElementById("authUsername");
+    const authPassword = document.getElementById("authPassword");
+    const registerBtn = document.getElementById("registerBtn");
+    const loginBtn = document.getElementById("loginBtn");
+    const authError = document.getElementById("authError");
+    const currentUser = document.getElementById("currentUser");
     const messages = document.getElementById("messages");
-    const nameInput = document.getElementById("name");
-    const messageInput = document.getElementById("message");
+    const messageInput = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
-    const emptyText = document.getElementById("emptyText");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    function sendMessage() {
-      const name = nameInput.value.trim();
-      const message = messageInput.value.trim();
+    let username = null;
 
-      if (!name || !message) {
-        alert("Заполни имя и сообщение");
+    function showChat(user) {
+      username = user.username;
+      currentUser.textContent = username;
+      authBox.classList.add("hidden");
+      chatBox.classList.remove("hidden");
+    }
+
+    function showAuth() {
+      username = null;
+      authBox.classList.remove("hidden");
+      chatBox.classList.add("hidden");
+    }
+
+    function addMessage(msg) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="username">${msg.username}</span>${msg.text}`;
+      messages.appendChild(li);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function loadMessages() {
+      messages.innerHTML = "";
+      const res = await fetch("/messages");
+      const data = await res.json();
+      data.forEach(addMessage);
+    }
+
+    async function checkSession() {
+      const res = await fetch("/me");
+      const data = await res.json();
+      if (data.user) {
+        showChat(data.user);
+        loadMessages();
+      } else {
+        showAuth();
+      }
+    }
+
+    registerBtn.onclick = async () => {
+      authError.textContent = "";
+      const res = await fetch("/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: authUsername.value.trim(),
+          password: authPassword.value.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        authError.textContent = data.error || "Ошибка регистрации";
         return;
       }
 
-      socket.emit("chat message", { name, message });
+      showChat({ username: data.username });
+      loadMessages();
+    };
+
+    loginBtn.onclick = async () => {
+      authError.textContent = "";
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: authUsername.value.trim(),
+          password: authPassword.value.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        authError.textContent = data.error || "Ошибка входа";
+        return;
+      }
+
+      showChat({ username: data.username });
+      loadMessages();
+    };
+
+    logoutBtn.onclick = async () => {
+      await fetch("/logout", { method: "POST" });
+      showAuth();
+    };
+
+    sendBtn.onclick = () => {
+      const text = messageInput.value.trim();
+      if (!text || !username) return;
+
+      socket.emit("chat message", {
+        username,
+        text
+      });
+
       messageInput.value = "";
       messageInput.focus();
-    }
-
-    sendBtn.addEventListener("click", sendMessage);
+    };
 
     messageInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        sendMessage();
-      }
+      if (e.key === "Enter") sendBtn.onclick();
     });
 
-    nameInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        messageInput.focus();
-      }
+    socket.on("chat message", (msg) => {
+      addMessage(msg);
     });
 
-    socket.on("chat message", (data) => {
-      if (emptyText) {
-        emptyText.remove();
-      }
-
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span class="username">${data.name}</span>
-        <span>${data.message}</span>
-      `;
-
-      messages.appendChild(li);
-      messages.scrollTop = messages.scrollHeight;
-    });
+    checkSession();
   </script>
 </body>
 </html>
